@@ -2,7 +2,7 @@ import telebot
 from telebot import types
 import datetime
 from key import key
-
+import requests
 
 bot = telebot.TeleBot(key)
 
@@ -21,6 +21,7 @@ defaultEmoji = u'\U0001F300' # default emojis
 nail = u'\U0001F485'
 
 
+
 @bot.message_handler(commands=['start'])
 def handle_start_help(message):
 
@@ -32,6 +33,12 @@ def handle_start_help(message):
         user_markup.row('/start', '/фоточка', '/testing_mode')
         user_markup.row('/видосик', '/аудюшка')
         bot.send_message(message.chat.id,'Дратути', reply_markup=user_markup)
+
+        MethodGetUpdates = 'https://api.telegram.org/bot{token}/getUpdates?offset=10'.format(token=key)
+
+        response = requests.post(MethodGetUpdates)
+        result = response.json()
+        print(result)
 
 
 @bot.message_handler(commands=['фоточка'])
@@ -83,9 +90,16 @@ def testing_mode(message):
 @bot.message_handler(content_types=['text'])
 def command_1(message):
     if message.text == '1':
-        bot.send_message(message.chat.id, 'congratulations!!')
+        bot.send_message(message.chat.id, 'congratulations!!1')
+    elif message.text == '2':
+        bot.send_message(message.chat.id, 'congratulations!!2')
+    elif message.text == '3':
+        bot.send_message(message.chat.id, 'congratulations!!3')
+    elif message.text == '4':
+        bot.send_message(message.chat.id, message.chat.id)
+        print(message.chat.id) #этот идентификатор будет записываться как уникальной и потом летит в базу вместе с ним
     else:
-        echo_msg(message) #тут используем функцию 
+        echo_msg(message) #тут используем функцию
 
 
 
