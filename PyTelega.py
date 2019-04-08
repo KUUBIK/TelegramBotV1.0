@@ -1,9 +1,8 @@
 import telebot
 from telebot import types
-import datetime
 from key import key
 import requests
-
+import os
 bot = telebot.TeleBot(key)
 
 thunderstorm = u'\U0001F4A8'    # Code: 200's, 900, 901, 902, 905
@@ -17,22 +16,21 @@ clearSky = u'\U00002600'        # Code: 800 clear sky
 fewClouds = u'\U000026C5'       # Code: 801 sun behind clouds
 clouds = u'\U00002601'          # Code: 802-803-804 clouds general
 hot = u'\U0001F525'             # Code: 904
-defaultEmoji = u'\U0001F300' # default emojis
-nail = u'\U0001F485'
+sparcle = u'\U00002728' # default emojis
+hi = u'\U0001F64B'
 
 
 
 @bot.message_handler(commands=['start'])
 def handle_start_help(message):
 
-        bot.send_message(message.chat.id, 'Привет! я тестовый бот по' + '\n'
-                                          'ноготочкам!!!' + nail +
-                                            'выберите себе ноготочки'
-                         )
         user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
-        user_markup.row('/start', '/фоточка', '/testing_mode')
-        user_markup.row('/видосик', '/аудюшка')
-        bot.send_message(message.chat.id,'Дратути', reply_markup=user_markup)
+        user_markup.row('/Каталог', 'О нас', 'Хочу сделать заказ')
+        user_markup.row('Наши акции')
+        bot.send_message(message.chat.id,'Привет!' + hi + 'На связи Qol_Decor!' + '\n'
+                                        'Это моя виртуальная помощница Яна ' 
+                                        'она поможет вам украсить ваш дом или офис '
+                                        'декоративными изделиями ручной работы' + sparcle , reply_markup=user_markup)
 
         MethodGetUpdates = 'https://api.telegram.org/bot{token}/getUpdates?offset=10'.format(token=key)
 
@@ -41,66 +39,61 @@ def handle_start_help(message):
         print(result)
 
 
-@bot.message_handler(commands=['фоточка'])
+@bot.message_handler(commands=['Каталог'])
 def send_photo(message):
-    if message.text == '/фоточка':
-        directory = 'img/1.png'
-        img = open(directory, 'rb')
-        bot.send_message(message.chat.id, 'load photos!')
-        bot.send_photo(message.chat.id, img)
-        img.close()
-
-
-@bot.message_handler(commands=['видосик'])
-def send_video(message):
-   if message.text == '/видосик':
-        dir = 'video/1.mp3'
-        video = open(dir, 'rb')
-        bot.send_message(message.chat.id, 'load video!')
-        bot.send_video(message.chat.id, video)
-        video.close()
-
-
-@bot.message_handler(commands=['аудюшка'])
-def send_audio(message):
-    if message.text == '/аудюшка':
-        dir = 'audio/1.mp3'
-        video = open(dir, 'rb')
-        bot.send_message(message.chat.id, 'load video!')
-        bot.send_video(message.chat.id, video)
-        video.close()
-
-
-
-
-@bot.message_handler(commands=['testing_mode'])
-def testing_mode(message):
-    bot.send_message(message.chat.id, "Приветствую мы компания занимающаяс продажей воздуха!!!"
-
-                     )
-    user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
-    user_markup.row('1', '2', '3', '4')
-    bot.send_message(message.chat.id,   "1.Почему мы?" + "\n"
-                                        "2.Зачем это вам?" +"\n"
-                                        "3.Чем мы лучше?" + "\n"
-                                        "4.Немного о самой компании", reply_markup=user_markup)
+    if message.text == '/Каталог':
+        # directory = 'img/coffe.jpg'
+        # img = open(directory, 'rb')
+        bot.send_message(message.chat.id, 'Представляем вам наш каталог!' + sparcle)
+        # bot.send_photo(message.chat.id, img )
+        # img.close()
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
+        user_markup.row('Чайные домики', 'Кофейные столики', 'Светильники')
+        user_markup.row('хочу заказать')
+        if message.text == 'F':
+            bot.send_message(message.chat.id, 'CYKA')
+        bot.send_message(message.chat.id,'.', reply_markup=user_markup)
 
 
 
 @bot.message_handler(content_types=['text'])
 def command_1(message):
-    if message.text == '1':
-        bot.send_message(message.chat.id, 'congratulations!!1')
-    elif message.text == '2':
-        bot.send_message(message.chat.id, 'congratulations!!2')
-    elif message.text == '3':
-        bot.send_message(message.chat.id, 'congratulations!!3')
+    if message.text == 'Чайные домики':
+        bot.send_message(message.chat.id, 'Здесь представленно несколько Чайных домиков!!!')
+        directory = 'img'
+        all_file = os.listdir(directory)
+        print(all_file)
+        for file in all_file:
+            img = open(directory + '/' + file, 'rb')
+            bot.send_photo(message.chat.id, img)
+            img.close()
+            bot.send_message(message.chat.id,   'код товара:111111' + '\n'
+                                           'цена:10000 тенге')
+
+
+
+    elif message.text == 'О нас':
+        video = open('video/1.mp3', 'rb')
+        bot.send_video(message.chat.id, video)
+        video.close()
+    elif message.text == 'хочу заказать':
+        bot.send_message(message.chat.id, "Введите ваши данные а так же номер заказа пример:Иванов Иван,"
+                                          "Ул.Пушкина Кв. 7, 88005553535,а111111 (номер заказа), наш курьер"
+                                          " свяжеться с вами для уточнения деталей заказа")
+
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
+        user_markup.row('По интернету', 'При получении')
+        bot.send_message(message.chat.id,'Выберите способы оплаты', reply_markup=user_markup)
+
+    elif message.text == 'При получении':
+        bot.send_message(message.chat.id, "Спасибо за заказ наш"
+                                          " курье в ближайшее время свяжеться с вами для уточнения заказа")
+
     elif message.text == '4':
         bot.send_message(message.chat.id, message.chat.id)
         print(message.chat.id) #этот идентификатор будет записываться как уникальной и потом летит в базу вместе с ним
     else:
         echo_msg(message) #тут используем функцию
-
 
 
 
