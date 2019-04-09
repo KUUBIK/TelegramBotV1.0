@@ -59,18 +59,33 @@ def send_photo(message):
 @bot.message_handler(content_types=['text'])
 def command_1(message):
     if message.text == 'Чайные домики':
-        bot.send_message(message.chat.id, 'Здесь представленно несколько Чайных домиков!!!')
-        directory = 'img'
+        directory = 'img/home'
         all_file = os.listdir(directory)
         print(all_file)
         for file in all_file:
             img = open(directory + '/' + file, 'rb')
             bot.send_photo(message.chat.id, img)
             img.close()
-            bot.send_message(message.chat.id,   'код товара:111111' + '\n'
-                                           'цена:10000 тенге')
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
+        user_markup.row('Чайные домики', 'Кофейные столики', 'Светильники')
+        user_markup.row('хочу заказать')
+        bot.send_message(message.chat.id,'Здесь представленно'
+                                         ' несколько Чайных'
+                                         ' домиков!!!' , reply_markup=user_markup)
 
-
+    elif message.text == 'Кофейные столики':
+        directory = 'img/table'
+        all_file = os.listdir(directory)
+        print(all_file)
+        for file in all_file:
+            img = open(directory + '/' + file, 'rb')
+            bot.send_photo(message.chat.id, img)
+            img.close()
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
+        user_markup.row('Чайные домики', 'Кофейные столики', 'Светильники')
+        user_markup.row('хочу заказать')
+        bot.send_message(message.chat.id, 'Здесь представленно'
+                                          ' несколько кофейных столиков', reply_markup=user_markup)
 
     elif message.text == 'О нас':
         video = open('video/1.mp3', 'rb')
@@ -97,8 +112,6 @@ def command_1(message):
 
 
 
-
-
 @bot.message_handler(func=lambda message: True,content_types=['text'])
 def echo_msg(message):
     bot.send_message(message.chat.id, message.text) # здесь он отправляеть сообщение (What??) на наш телеграмм бот
@@ -110,5 +123,3 @@ def echo_msg(message):
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
-
-
