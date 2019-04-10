@@ -21,6 +21,14 @@ hi = u'\U0001F64B'
 
 
 
+@bot.message_handler(commands=["go"])
+#главное меню
+def start(message):
+    key = types.InlineKeyboardMarkup()
+    key.add(types.InlineKeyboardButton(text='кнопка1', callback_data="butt1"))
+    key.add(types.InlineKeyboardButton(text='кнопка2', callback_data="butt2"))
+    msg=bot.send_message(message.chat.id, 'Нажми кнопку', reply_markup=key)
+
 @bot.message_handler(commands=['start'])
 def handle_start_help(message):
 
@@ -62,16 +70,22 @@ def command_1(message):
         directory = 'img/home'
         all_file = os.listdir(directory)
         print(all_file)
+        i = 0
         for file in all_file:
+            i = i + 1
             img = open(directory + '/' + file, 'rb')
             bot.send_photo(message.chat.id, img)
+            key = types.InlineKeyboardMarkup()
+            key.add(types.InlineKeyboardButton(text='Заказать товар номер ' + str(i), callback_data="butt"  + str(i)))
+            msg = bot.send_message(message.chat.id, 'Выбери меня!!!', reply_markup=key)
             img.close()
+
         user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
         user_markup.row('Чайные домики', 'Кофейные столики', 'Светильники')
         user_markup.row('хочу заказать')
         bot.send_message(message.chat.id,'Здесь представленно'
                                          ' несколько Чайных'
-                                         ' домиков!!!' , reply_markup=user_markup)
+                                         ' домиков!!!' , reply_markup=user_markup )
 
     elif message.text == 'Кофейные столики':
         directory = 'img/table'
@@ -80,6 +94,9 @@ def command_1(message):
         for file in all_file:
             img = open(directory + '/' + file, 'rb')
             bot.send_photo(message.chat.id, img)
+            key = types.InlineKeyboardMarkup()
+            key.add(types.InlineKeyboardButton(text='кнопка2', callback_data="butt2"))
+            msg = bot.send_message(message.chat.id, 'Нажми кнопку', reply_markup=key)
             img.close()
         user_markup = telebot.types.ReplyKeyboardMarkup(True, True)
         user_markup.row('Чайные домики', 'Кофейные столики', 'Светильники')
@@ -111,6 +128,21 @@ def command_1(message):
         echo_msg(message) #тут используем функцию
 
 
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    # Если сообщение из чата с ботом
+    kontainer = []
+    if call.data == "butt1":
+            zakaz = kontainer.append("1")
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Вы заказали"
+                                                                                        " товар под номером 1")
+            # Если сообщение из инлайн-режима
+    elif call.data == "butt2":
+            zakaz = kontainer.append("2")
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Вы заказали"
+                                                                                               " товар под номером 2")
+    print(kontainer)
 
 @bot.message_handler(func=lambda message: True,content_types=['text'])
 def echo_msg(message):
